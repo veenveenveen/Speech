@@ -55,10 +55,6 @@ struct VGUser: Model {
     
     // NodeRepresentable
     
-//    func makeJSON() throws -> JSON {
-//        return try JSON(node: [])
-//    }
-    
     func makeNode(context: Context) throws -> Node {
         return try Node(node: ["id":id, "username":username, "password":password, "deviceid":deviceid])
     }
