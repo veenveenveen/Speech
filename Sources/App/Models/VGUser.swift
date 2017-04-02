@@ -12,7 +12,7 @@ import Fluent
 /// `Type` define
 /// 代表一个登录用户
 ///
-class VGUser: Model {
+struct VGUser: Model {
     
     // MARK: - Properties
     
@@ -20,16 +20,15 @@ class VGUser: Model {
     
     let password: String
     
-    let deviceID: String
+    let deviceid: String
     
-    /// This property details whether or not the instance was retrieved from the database 
-    /// and should not be interacted with directly.
-    var isExisted: Bool = false
     
-    init(username: String, password: String, deviceID: String) {
+    init(username: String, password: String, deviceid: String) {
+        self.id = nil
+        self.exists = false
         self.username = username
         self.password = password
-        self.deviceID = deviceID
+        self.deviceid = deviceid
     }
     
     
@@ -42,56 +41,47 @@ class VGUser: Model {
      */
     var id: Node?
 
+    var exists: Bool = false
     
-    /**
-     Initialize the convertible with a node within a context.
-     
-     Context is an empty protocol to which any type can conform.
-     This allows flexibility. for objects that might require access
-     to a context outside of the node ecosystem
-     */
-    required init(node: Node, in context: Context) throws {
+    // NodeInitializable
+    
+    init(node: Node, in context: Context) throws {
         id = try node.extract("id")
         username = try node.extract("username")
         password = try node.extract("password")
-        deviceID = try node.extract("deviceID")
+        deviceid = try node.extract("deviceid")
     }
     
-    /**
-     Turn the convertible into a node
-     
-     - throws: if convertible can not create a Node
-     - returns: a node if possible
-     */
+    
+    // NodeRepresentable
+    
+//    func makeJSON() throws -> JSON {
+//        return try JSON(node: [])
+//    }
+    
     func makeNode(context: Context) throws -> Node {
-        return try Node(node: ["id":id,"username":username,"password":password,"deviceID":deviceID])
+        return try Node(node: ["id":id, "username":username, "password":password, "deviceid":deviceid])
     }
     
-    /**
-     The revert method should undo any actions
-     caused by the prepare method.
-     
-     If this is impossible, the `PreparationError.revertImpossible`
-     error should be thrown.
-     */
+    
+    // Preparation
+    
     static func revert(_ database: Database) throws {
-        try database.delete("speech")
+        try database.delete("vgusers")
     }
     
-    /**
-     The prepare method should call any methods
-     it needs on the database to prepare.
-     */
     static func prepare(_ database: Database) throws {
-        try database.create("speech", closure: { (speech: Schema.Creator) in
+        try database.create("vgusers", closure: { (u: Schema.Creator) in
             
-            speech.id()
-            speech.string("username")
-            speech.string("password")
-            speech.string("deviceID")
+            u.id()
+            u.string("username")
+            u.string("password")
+            u.string("deviceid")
             
         })
     }
+    
+    
 }
 
 
