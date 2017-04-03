@@ -1,14 +1,25 @@
-/// https://aqueous-falls-99981.herokuapp.com/api/users
+///
+/// Deploying URL: https://aqueous-falls-99981.herokuapp.com/api/users
+///
 
 import Foundation
 import Vapor
 import HTTP
 import VaporPostgreSQL
 
+
 let drop = Droplet()
 
-/// so that we can use our model with the database
+
+/// create database table
 drop.preparations.append(VGUser.self)
+drop.preparations.append(Airh.self)
+drop.preparations.append(Airt.self)
+drop.preparations.append(Cooc.self)
+drop.preparations.append(Lighti.self)
+drop.preparations.append(Soilh.self)
+drop.preparations.append(Soilt.self)
+
 
 /// adds our provider to the droplet so that the database is available
 do {
