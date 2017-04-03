@@ -16,25 +16,25 @@ do {
     assertionFailure("error add VaporPostgreSQL.Provider: \(error.localizedDescription)")
 }
 
+/// Welcom page
 drop.get { req in
     return try drop.view.make("welcome", [
     	"message": drop.localization[req.lang, "welcome", "title"]
     ])
 }
 
+/// Regist basic grouped routes
+let basic = BasicController()
+basic.add(basicGroupedRoutes: drop)
+
+/// /vgusers/xxx restful api
+let userResource = VGUserController()
+drop.resource("vgusers", userResource)
+
+
 drop.group("api") { api in
     
-    /// postgresql version
-    api.get("version") { _ in
-        
-        guard let db = drop.database?.driver as? PostgreSQLDriver else {
-            throw Abort.badRequest
-        }
-        
-        let version = try db.raw("SELECT version()")
-        
-        return try JSON(node: version)
-    }
+    
     
     /// request body: {"username":username,"password":password,"deviceID":deviceID}
     api.post("login", handler: { (request) -> ResponseRepresentable in
@@ -46,73 +46,6 @@ drop.group("api") { api in
         }
         
         return "FFEA8B35C6A"
-    })
-    
-    /// request body: {"username":username,"password":password,"deviceID":deviceID}
-    api.post("register", handler: { (request) -> ResponseRepresentable in
-        
-        var user = try VGUser(node: request.json)
-        
-        print(user)
-        
-        try user.save()
-        
-        print(user)
-
-        return try user.makeJSON()
-    })
-    
-    /// /users
-    api.get("users", handler: { (request) -> ResponseRepresentable in
-        
-        let users = try VGUser.all().makeNode()
-        
-        return try JSON(node: ["users":users])
-    })
-    
-    /// /user/1
-    api.get("user", Int.self, handler: { request, id -> ResponseRepresentable in
-        
-        guard let user = try VGUser.find( id ) else {
-            throw Abort.badRequest
-        }
-        
-        
-        return try user.makeJSON()
-    })
-    
-    /// request body: {"id":1}
-    api.post("deleteuser", Int.self, handler: { (request, id) -> ResponseRepresentable in
-        
-        guard let user = try VGUser.find(id) else {
-            throw Abort.badRequest
-        }
-        
-        let json = try user.makeJSON()
-        
-        try user.delete()
-        
-        return json
-    })
-    
-    
-    api.post("deleteusers", handler: { (request) -> ResponseRepresentable in
-        
-        let users = try VGUser.all()
-        
-        var count = 0
-        users.forEach({ (user) in
-            do {
-                try user.delete()
-                count += 1
-            } catch {
-                print("Fail to delete user \(user.id ?? "xx", user.username)")
-                return
-            }
-            
-        })
-        
-        return "deleted \(count) of all \(users.count)  users"
     })
     
     api.get("sensor", "\(MeasurementType.integrated).json", handler: { (request) -> ResponseRepresentable in
@@ -128,6 +61,5 @@ drop.group("api") { api in
     })
 }
 
-drop.resource("posts", PostController())
 
 drop.run()

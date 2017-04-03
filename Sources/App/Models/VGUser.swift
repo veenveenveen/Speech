@@ -10,7 +10,7 @@ import Vapor
 import Fluent
 
 /// `Type` define
-/// 代表一个登录用户
+/// 用户
 ///
 struct VGUser: Model {
     
@@ -18,7 +18,7 @@ struct VGUser: Model {
     
     let username: String
     
-    let password: String
+    var password: String
     
     let deviceid: String
     
@@ -56,11 +56,20 @@ struct VGUser: Model {
     // NodeRepresentable
     
     func makeNode(context: Context) throws -> Node {
-        return try Node(node: ["id":id, "username":username, "password":password, "deviceid":deviceid])
+        return try Node(node: [
+            "id":id,
+            "username":username,
+            "password":password,
+            "deviceid":deviceid
+            ])
     }
     
     
-    // Preparation
+}
+
+/// Preparation
+///
+extension VGUser {
     
     static func revert(_ database: Database) throws {
         try database.delete("vgusers")
@@ -76,8 +85,6 @@ struct VGUser: Model {
             
         })
     }
-    
-    
 }
 
 
