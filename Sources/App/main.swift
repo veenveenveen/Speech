@@ -16,6 +16,7 @@ do {
     assertionFailure("error add VaporPostgreSQL.Provider: \(error.localizedDescription)")
 }
 
+
 /// Welcom page
 drop.get { req in
     return try drop.view.make("welcome", [
@@ -23,42 +24,31 @@ drop.get { req in
     ])
 }
 
-/// Regist basic grouped routes
-let basic = BasicController()
-basic.add(basicGroupedRoutes: drop)
-
-/// /vgusers/xxx restful api
-let userResource = VGUserController()
-drop.resource("vgusers", userResource)
-
+//
+///// Regist basic grouped routes
+//let basic = BasicController()
+//basic.add(basicGroupedRoutes: drop)
+//
+//
+///// /vgusers/xxx restful api
+//let userResource = VGUserController()
+//drop.resource("vgusers", userResource)
+//
 
 drop.group("api") { api in
     
     
-    
-    /// request body: {"username":username,"password":password,"deviceID":deviceID}
-    api.post("login", handler: { (request) -> ResponseRepresentable in
-        
-        guard
-            let username = request.data["username"]?.string,
-            let password = request.data["password"]?.string else {
-                throw Abort.badRequest
-        }
-        
-        return "FFEA8B35C6A"
-    })
-    
-    api.get("sensor", "\(MeasurementType.integrated).json", handler: { (request) -> ResponseRepresentable in
-        
-        return try JSON(node: [
-            "\(MeasurementType.airHumidity)"        :   75.8,
-            "\(MeasurementType.airTemperature)"     :   25.4,
-            "\(MeasurementType.soilHumidity)"       :   82.2,
-            "\(MeasurementType.soilTemperature)"    :   22.8,
-            "\(MeasurementType.lightIntensity)"     :   18.2,
-            "\(MeasurementType.co2Concentration)"   :   673.6
-            ])
-    })
+//    api.get("sensor", "\(MeasurementType.integrated).json", handler: { (request) -> ResponseRepresentable in
+//        
+//        return try JSON(node: [
+//            "\(MeasurementType.airHumidity)"        :   75.8,
+//            "\(MeasurementType.airTemperature)"     :   25.4,
+//            "\(MeasurementType.soilHumidity)"       :   82.2,
+//            "\(MeasurementType.soilTemperature)"    :   22.8,
+//            "\(MeasurementType.lightIntensity)"     :   18.2,
+//            "\(MeasurementType.co2Concentration)"   :   673.6
+//            ])
+//    })
 }
 
 
