@@ -6,6 +6,8 @@
 //
 //
 
+import Vapor
+
 /// 监测信息种类
 ///
 public enum MeasurementType: Int, Equatable {
@@ -33,10 +35,9 @@ public enum MeasurementType: Int, Equatable {
 }
 
 
-import Vapor
 
 /// `Type` define
-/// 监测数据：空气温度
+/// 监测数据的抽象父类，实现了部分Model协议，除了Preparation
 ///
 class Measurement {
     

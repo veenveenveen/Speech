@@ -1,5 +1,6 @@
 /// https://aqueous-falls-99981.herokuapp.com/api/users
 
+import Foundation
 import Vapor
 import HTTP
 import VaporPostgreSQL
@@ -24,31 +25,31 @@ drop.get { req in
     ])
 }
 
-//
-///// Regist basic grouped routes
-//let basic = BasicController()
-//basic.add(basicGroupedRoutes: drop)
-//
-//
-///// /vgusers/xxx restful api
-//let userResource = VGUserController()
-//drop.resource("vgusers", userResource)
-//
+
+/// Regist basic grouped routes
+let basic = BasicController()
+basic.add(basicGroupedRoutes: drop)
+
+
+/// /vgusers/xxx restful api
+let userResource = VGUserController()
+drop.resource("vgusers", userResource)
+
 
 drop.group("api") { api in
     
     
-//    api.get("sensor", "\(MeasurementType.integrated).json", handler: { (request) -> ResponseRepresentable in
-//        
-//        return try JSON(node: [
-//            "\(MeasurementType.airHumidity)"        :   75.8,
-//            "\(MeasurementType.airTemperature)"     :   25.4,
-//            "\(MeasurementType.soilHumidity)"       :   82.2,
-//            "\(MeasurementType.soilTemperature)"    :   22.8,
-//            "\(MeasurementType.lightIntensity)"     :   18.2,
-//            "\(MeasurementType.co2Concentration)"   :   673.6
-//            ])
-//    })
+    api.get("sensor", "\(MeasurementType.integrated).json", handler: { (request) -> ResponseRepresentable in
+        
+        return try JSON(node: [
+            "\(MeasurementType.airHumidity)"        :   75.8,
+            "\(MeasurementType.airTemperature)"     :   25.4,
+            "\(MeasurementType.soilHumidity)"       :   82.2,
+            "\(MeasurementType.soilTemperature)"    :   22.8,
+            "\(MeasurementType.lightIntensity)"     :   18.2,
+            "\(MeasurementType.co2Concentration)"   :   673.6
+            ])
+    })
 }
 
 
