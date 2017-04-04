@@ -97,3 +97,7 @@ class Measurement: MeasurementInfo, MeasurementInfoInitializable {
             ])
     }
 }
+
+extension Measurement: NodeInitializable, NodeRepresentable {
+    
+}
