@@ -29,14 +29,6 @@ do {
 }
 
 
-/// Welcom page
-drop.get { req in
-    return try drop.view.make("welcome", [
-    	"message": drop.localization[req.lang, "welcome", "title"]
-    ])
-}
-
-
 /// Regist basic grouped routes
 let basic = BasicController()
 basic.add(basicGroupedRoutes: drop)
@@ -46,21 +38,36 @@ basic.add(basicGroupedRoutes: drop)
 let userResource = VGUserController()
 drop.resource("vgusers", userResource)
 
+/// /airh/xxx restful api 75.8
+let airhResource = MeasurementController<Airh>()
+drop.resource("airh", airhResource)
 
-drop.group("api") { api in
-    
-    
-    api.get("sensor", "\(MeasurementType.integrated).json", handler: { (request) -> ResponseRepresentable in
-        
-        return try JSON(node: [
-            "\(MeasurementType.airHumidity)"        :   75.8,
-            "\(MeasurementType.airTemperature)"     :   25.4,
-            "\(MeasurementType.soilHumidity)"       :   82.2,
-            "\(MeasurementType.soilTemperature)"    :   22.8,
-            "\(MeasurementType.lightIntensity)"     :   18.2,
-            "\(MeasurementType.co2Concentration)"   :   673.6
-            ])
-    })
+/// /airt/xxx restful api 25.4
+let airtResource = MeasurementController<Airt>()
+drop.resource("airt", airhResource)
+
+/// /soilh/xxx restful api 82.2
+let soilhResource = MeasurementController<Soilh>()
+drop.resource("soilh", airhResource)
+
+/// /soilt/xxx restful api 22.8
+let soiltResource = MeasurementController<Soilt>()
+drop.resource("soilt", airhResource)
+
+/// /lighti/xxx restful api 18.2
+let lightiResource = MeasurementController<Lighti>()
+drop.resource("lighti", airhResource)
+
+/// /cooc/xxx restful api 673.6
+let coocResource = MeasurementController<Cooc>()
+drop.resource("cooc", airhResource)
+
+
+/// Welcom page
+drop.get { req in
+    return try drop.view.make("welcome", [
+        "message": drop.localization[req.lang, "welcome", "title"]
+        ])
 }
 
 

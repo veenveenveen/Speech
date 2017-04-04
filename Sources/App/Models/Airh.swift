@@ -22,8 +22,10 @@ final class Airh: Measurement, Model {
     static func prepare(_ database: Database) throws {
         try database.create("airhs") {
             $0.id()
-            $0.double("time")
             $0.double("value")
+            $0.double("time")
         }
     }
 }
+
+

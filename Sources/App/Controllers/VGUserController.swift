@@ -6,9 +6,11 @@
 //
 //
 
+
 import Vapor
 import HTTP
 import VaporPostgreSQL
+
 
 final class VGUserController: ResourceRepresentable {
     
@@ -67,6 +69,7 @@ final class VGUserController: ResourceRepresentable {
         )
     }
 }
+
 
 extension Request {
     func vguser() throws -> VGUser {
