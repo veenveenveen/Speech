@@ -69,7 +69,6 @@ final class MeasurementController<T> where T: MeasurementModel  {
 extension MeasurementController: ResourceRepresentable {
     
     func makeResource() -> Resource<T> {
-        
         return Resource(index: index,
                         store: create,
                         show: show,
@@ -82,25 +81,44 @@ extension MeasurementController: ResourceRepresentable {
     }
 }
 
+extension MeasurementController where T: RangeQueryable, T.AttributeType == Double {
+    
+    /// airts/range?from=2017-03-01 08:00:00&to=2017-03-03 08:00:00
+    func range(request: Request) throws -> ResponseRepresentable {
+        guard
+            let fromString = request.query?["from"]?.string,
+            let toString = request.query?["to"]?.string else {
+                throw Abort.badRequest
+        }
+        
+        let from = try fromString.dateTimeIntervalFrom1970()
+        let to = try toString.dateTimeIntervalFrom1970()
+        
+        guard from < to else {
+            throw Abort.custom(status: .badRequest, message: "Invalid condition: `from`<\(fromString)> > `to`<\(toString)>")
+        }
+        
+        let range = Range<Double>(uncheckedBounds: (from, to))
+        
+        return try T.query(range: range)
+    }
+}
+
 
 /// 使用Request创建Measurement Model
 extension Request {
     
     func measurement<T: MeasurementModel>() throws -> T {
-        
         guard
-            let timeStr = data["time"]?.string,
-            let valueStr = data["value"]?.string,
-            let value = Double(valueStr) else {
+            let value = data[ Measurement.Attr.value ]?.double,
+            let timeStr = data[ Measurement.Attr.time ]?.string else {
                 throw Abort.badRequest
         }
         
         let time = try timeStr.dateTimeIntervalFrom1970()
         
-        let t = T(time: time, value: value)
-        
-        print(timeStr, valueStr, value, time, t)
-        
-        return t
+        return T(time: time, value: value)
     }
 }
+
+

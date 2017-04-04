@@ -9,7 +9,7 @@
 import Vapor
 import HTTP
 import VaporPostgreSQL
-//import JSON
+import Fluent
 
 /// 包含 ／basic/xxx 路由的处理函数
 final class BasicController {
@@ -18,7 +18,8 @@ final class BasicController {
     func add(basicGroupedRoutes drop: Droplet) {
         let basic = drop.grouped("basic")
         basic.get("version", handler: version)
-        basic.get("measurement", handler: measurement)
+        basic.get("integrated", handler: integrated)
+        basic.get("range", handler: range)
     }
     
     /// postgresql version
@@ -32,7 +33,8 @@ final class BasicController {
         return try JSON(node: version)
     }
     
-    func measurement(request: Request) throws -> ResponseRepresentable {
+    /// first of all types
+    func integrated(request: Request) throws -> ResponseRepresentable {
         var nodes = [JSON]()
         var json: JSON
         
@@ -81,4 +83,61 @@ final class BasicController {
         return try nodes.makeJSON()
     }
     
+    /// { from:2017-03-01 08:00:00, to:2017-03-03 08:00:00 }
+    func airTemperature(request: Request) throws -> ResponseRepresentable {
+        guard
+            let fromString = request.data["from"]?.string,
+            let toString = request.data["to"]?.string else {
+                throw Abort.badRequest
+        }
+        
+        let from = try fromString.dateTimeIntervalFrom1970()
+        let to = try toString.dateTimeIntervalFrom1970()
+        
+        guard from < to else {
+            throw Abort.badRequest
+        }
+        
+        return try Airt.query()
+            .filter("time", .greaterThanOrEquals, from)
+            .filter("time", .lessThanOrEquals, to)
+            .all()
+            .makeJSON()
+    }
+    
+    /// ?type=airTemperature&from=2017-03-01 08:00:00&to=2017-03-03 08:00:00
+    func range(request: Request) throws -> ResponseRepresentable {
+        guard
+            let type = request.query?["type"]?.string,
+            let fromString = request.query?["from"]?.string,
+            let toString = request.query?["to"]?.string else {
+                throw Abort.badRequest
+        }
+        
+        let from = try fromString.dateTimeIntervalFrom1970()
+        let to = try toString.dateTimeIntervalFrom1970()
+        
+        guard from < to else {
+            throw Abort.custom(status: .badRequest, message: "Invalid condition: `from`<\(fromString)> > `to`<\(toString)>")
+        }
+        
+        let range = Range<Double>(uncheckedBounds: (from, to))
+        
+        switch type {
+        case MeasurementType.airTemperature.description:
+            return try Airt.query(range: range)
+        case MeasurementType.airHumidity.description:
+            return try Airh.query(range: range)
+        case MeasurementType.soilTemperature.description:
+            return try Soilt.query(range: range)
+        case MeasurementType.soilHumidity.description:
+            return try Soilh.query(range: range)
+        case MeasurementType.lightIntensity.description:
+            return try Lighti.query(range: range)
+        case MeasurementType.co2Concentration.description:
+            return try Cooc.query(range: range)
+        default:
+            throw Abort.custom(status: .badRequest, message: "Invalid query `type`<\(type)> value")
+        }
+    }
 }

@@ -10,7 +10,7 @@ import Vapor
 
 /// 监测信息种类
 ///
-public enum MeasurementType: Int, Equatable {
+enum MeasurementType: Int, Equatable {
     
     /// 空气温度
     case airTemperature
@@ -34,6 +34,36 @@ public enum MeasurementType: Int, Equatable {
     case integrated
 }
 
+extension MeasurementType {
+    var description: String {
+        switch self {
+        case .airHumidity: return "airHumidity"
+        case .airTemperature: return "airTemperature"
+        case .soilHumidity: return "soilHumidity"
+        case .soilTemperature: return "soilTemperature"
+        case .lightIntensity: return "lightIntensity"
+        case .co2Concentration: return "co2Concentration"
+        case .integrated: return "integrated"
+        }
+    }
+    
+    var shortDescription: String {
+        switch self {
+        case .airHumidity: return "airh"
+        case .airTemperature: return "airt"
+        case .soilHumidity: return "soilh"
+        case .soilTemperature: return "soilt"
+        case .lightIntensity: return "lighti"
+        case .co2Concentration: return "cooc"
+        case .integrated: return "all"
+        }
+    }
+    
+    var tablename: String {
+        return "\(shortDescription)s"
+    }
+}
+
 
 /// 监测数据需要记录的监测信息
 ///
@@ -51,6 +81,13 @@ protocol MeasurementInfoInitializable {
     init(time: Double, value: Double)
 }
 
+protocol RangeQueryable {
+    
+    associatedtype AttributeType: Comparable
+    
+    static func query(range: Range<AttributeType>) throws -> JSON
+}
+
 /// `Type` define
 /// 监测数据的抽象父类，实现了部分Model协议，除了Preparation
 /// Preparation 需要静态方法，只能由单独的数据结构实现
@@ -61,6 +98,7 @@ class Measurement: MeasurementInfo, MeasurementInfoInitializable {
     
     /// 采样时间
     var time: Double
+    
     /// 采样值
     var value: Double
     
@@ -81,9 +119,9 @@ class Measurement: MeasurementInfo, MeasurementInfoInitializable {
     // NodeInitializable
     
     required init(node: Node, in context: Context) throws {
-        id = try node.extract("id")
-        time = try node.extract("time")
-        value = try node.extract("value")
+        id = try node.extract(Attr.id)
+        time = try node.extract(Attr.time)
+        value = try node.extract(Attr.value)
     }
     
     
@@ -91,13 +129,22 @@ class Measurement: MeasurementInfo, MeasurementInfoInitializable {
     
     func makeNode(context: Context) throws -> Node {
         return try Node(node: [
-            "id":id,
-            "time":time,
-            "value":value
+            Attr.id:id,
+            Attr.time:time,
+            Attr.value:value
             ])
     }
 }
 
 extension Measurement: NodeInitializable, NodeRepresentable {
     
+}
+
+extension Measurement {
+    
+    struct Attr {
+        static let id = "id"
+        static let time = "time"
+        static let value = "value"
+    }
 }
