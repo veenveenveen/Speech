@@ -2,34 +2,19 @@
 /// Deploying URL: https://aqueous-falls-99981.herokuapp.com/api/users
 ///
 
+
 import Foundation
 import Vapor
 import HTTP
 import VaporPostgreSQL
 
-import Fluent
 
 let drop = Droplet()
 
-extension Droplet {
-    
-    func append(preparations: [Preparation.Type]) {
-        var tem = self.preparations
-        tem.append(contentsOf: preparations)
-        self.preparations = tem
-    }
-}
 
 /// create database tables
-//drop.preparations.append(VGUser.self)
-//drop.preparations.append(Airh.self)
-//drop.preparations.append(Airt.self)
-//drop.preparations.append(Cooc.self)
-//drop.preparations.append(Lighti.self)
-//drop.preparations.append(Soilh.self)
-//drop.preparations.append(Soilt.self)
-
 drop.append(preparations: [VGUser.self, Airh.self, Airt.self, Cooc.self, Lighti.self, Soilh.self, Soilt.self])
+
 
 /// adds our provider to the droplet so that the database is available
 do {
