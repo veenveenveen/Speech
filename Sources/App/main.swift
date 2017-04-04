@@ -40,27 +40,27 @@ drop.resource("vgusers", userResource)
 
 /// /airh/xxx restful api 75.8
 let airhResource = MeasurementController<Airh>()
-drop.resource("airh", airhResource)
+drop.resource("airhs", airhResource)
 
 /// /airt/xxx restful api 25.4
 let airtResource = MeasurementController<Airt>()
-drop.resource("airt", airhResource)
+drop.resource("airts", airhResource)
 
 /// /soilh/xxx restful api 82.2
 let soilhResource = MeasurementController<Soilh>()
-drop.resource("soilh", airhResource)
+drop.resource("soilhs", airhResource)
 
 /// /soilt/xxx restful api 22.8
 let soiltResource = MeasurementController<Soilt>()
-drop.resource("soilt", airhResource)
+drop.resource("soilts", airhResource)
 
 /// /lighti/xxx restful api 18.2
 let lightiResource = MeasurementController<Lighti>()
-drop.resource("lighti", airhResource)
+drop.resource("lightis", airhResource)
 
 /// /cooc/xxx restful api 673.6
 let coocResource = MeasurementController<Cooc>()
-drop.resource("cooc", airhResource)
+drop.resource("coocs", airhResource)
 
 
 /// Welcom page

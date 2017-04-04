@@ -23,11 +23,13 @@ final class MeasurementController<T> where T: MeasurementModel  {
     
     /// all models
     func index(request: Request) throws -> ResponseRepresentable {
+        print(self, #function)
         return try T.all().makeNode().converted(to: JSON.self)
     }
     
     /// add a model
     func create(request: Request) throws -> ResponseRepresentable {
+        print(self, #function)
         var t: T = try request.measurement()
         try t.save()
         return t
@@ -35,15 +37,18 @@ final class MeasurementController<T> where T: MeasurementModel  {
     
     /// fetch a model
     func show(request: Request, t: T) throws -> ResponseRepresentable {
+        print(self, #function)
         return t
     }
     
     func aboutItem(request: Request, t: T) throws -> ResponseRepresentable {
+        print(self, #function)
         return t
     }
     
     /// delete a model
     func delete(request: Request, t: T) throws -> ResponseRepresentable {
+        print(self, #function)
         let json = try t.makeJSON()
         try t.delete()
         return json
@@ -51,6 +56,7 @@ final class MeasurementController<T> where T: MeasurementModel  {
     
     /// delete all models
     func clear(request: Request) throws -> ResponseRepresentable {
+        print(self, #function)
         try VGUser.query().delete()
         return JSON([])
     }
