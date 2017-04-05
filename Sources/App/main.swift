@@ -32,14 +32,14 @@ drop.get { req in
 }
 
 
-
 /// Regist basic grouped routes
 let basic = BasicController()
 basic.add(basicGroupedRoutes: drop)
 
 /// /vgusers/xxx restful api
 let userResource = VGUserController()
-drop.resource("vgusers", userResource)
+drop.resource("users", userResource)
+userResource.add(usersGroupedRoutes: drop)
 
 /// /airh/xxx restful api 75.8
 let airhResource = MeasurementController<Airh>()
@@ -70,8 +70,6 @@ drop.get(MeasurementType.lightIntensity.tablename, "range", handler: lightiResou
 let coocResource = MeasurementController<Cooc>()
 drop.resource(MeasurementType.co2Concentration.tablename, airhResource)
 drop.get(MeasurementType.co2Concentration.tablename, "range", handler: coocResource.range)
-
-
 
 
 drop.run()
