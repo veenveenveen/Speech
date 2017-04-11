@@ -128,17 +128,19 @@ final class VGUserController: ResourceRepresentable {
 
 extension VGUserController {
     
-    // MARK: - Basic api
-
     func add(usersGroupedRoutes drop: Droplet) {
         let group = drop.grouped("users")
         group.post("login", handler: login)
         group.post("register", handler: register)
         group.post("findPassword", handler: findPassword)
+        group.get("usersview", handler: indexView)
     }
     
-    /// 应该使用的登录注册方法
     
+    // MARK: - Basic api
+
+    /// 应该使用的登录注册方法
+
     func register(request: Request) throws -> ResponseRepresentable {
         guard
             let username = request.vgusername,
@@ -177,5 +179,15 @@ extension VGUserController {
             throw Abort.badRequest
         }
         return try u.makeJSON()
+    }
+    
+    // MARK: - Views api
+    
+    func indexView(request: Request) throws -> ResponseRepresentable {
+        let allusers = try VGUser.all().makeNode()
+        let parameters = try Node(node: [
+                "users":allusers
+            ])
+        return try drop.view.make("vguser", parameters)
     }
 }

@@ -24,7 +24,7 @@ do {
 }
 
 
-/// Welcom page
+/// Welcome page
 drop.get { req in
     return try drop.view.make("welcome", [
         "message": drop.localization[req.lang, "welcome", "title"]
@@ -72,4 +72,5 @@ drop.resource(MeasurementType.co2Concentration.tablename, airhResource)
 drop.get(MeasurementType.co2Concentration.tablename, "range", handler: coocResource.range)
 
 
+/// Should run droplet in main.swift
 drop.run()
