@@ -20,14 +20,17 @@ struct VGUser: Model {
     
     var password: String
     
+    var email: String
+    
     let deviceid: String
     
     
-    init(username: String, password: String, deviceid: String) {
+    init(username: String, password: String, deviceid: String, email: String) {
         self.id = nil
         self.exists = false
         self.username = username
         self.password = password
+        self.email = email
         self.deviceid = deviceid
     }
     
@@ -49,6 +52,7 @@ struct VGUser: Model {
         id = try node.extract("id")
         username = try node.extract("username")
         password = try node.extract("password")
+        email = try node.extract("email")
         deviceid = try node.extract("deviceid")
     }
     
@@ -60,6 +64,7 @@ struct VGUser: Model {
             "id":id,
             "username":username,
             "password":password,
+            "email":email,
             "deviceid":deviceid
             ])
     }
@@ -81,6 +86,7 @@ extension VGUser {
             u.id()
             u.string("username")
             u.string("password")
+            u.string("email")
             u.string("deviceid")
             
         })

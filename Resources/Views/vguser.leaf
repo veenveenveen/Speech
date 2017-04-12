@@ -12,13 +12,25 @@
     <div class="container">
         <div class="row">
             <div class="u-full-width">
-                <h2>A<small>ll Users</small></h2>
+                <h2>All Users</h2>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="four columns">
+                <h5>user id</h5>
+            </div>
+            <div class="four columns">
+                <h5>user name</h5>
+            </div>
+            <div class="four columns">
+                <h5>device id</h5>
             </div>
         </div>
         
         #loop(users, "user") {
             <div class="row">
-                <div class="two columns">
+                <div class="four columns">
                     <h5><span>#(user.id)</span></h5>
                 </div>
                 <div class="four columns">
@@ -26,9 +38,6 @@
                 </div>
                 <div class="four columns">
                     <p>#(user.deviceid)</p>
-                </div>
-                <div class="two columns">
-                    
                 </div>
             </div>
         }

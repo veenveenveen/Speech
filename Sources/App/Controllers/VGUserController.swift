@@ -54,6 +54,15 @@ extension Request {
         }
     }
     
+    var vgemail: String? {
+        do {
+            let obj = try jsonObject()
+            return obj["email"]
+        } catch {
+            return nil
+        }
+    }
+    
     var vgdeviceid: String? {
         do {
             let obj = try jsonObject()
@@ -148,7 +157,8 @@ extension VGUserController {
             let deviceid = request.vgdeviceid else {
                 throw Abort.custom(status: .badRequest, message: "Invalid register info")
         }
-        var user = VGUser(username: username, password: password, deviceid: deviceid)
+        let email = request.vgemail ?? ""
+        var user = VGUser(username: username, password: password, deviceid: deviceid, email: email)
         try user.save()
         return try user.makeJSON()
     }
