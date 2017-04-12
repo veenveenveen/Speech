@@ -31,19 +31,19 @@
             </div>
         </div>
         
-        #loop(users, "user") {
+        #loop(items, "item") {
             <div class="row">
                 <div class="three columns">
-                    <h5><span>#(user.id)</span></h5>
+                    <h5><span>#(item.id)</span></h5>
                 </div>
                 <div class="three columns">
-                    <p>#(user.username)</p>
+                    <p>#(item.username)</p>
                 </div>
                 <div class="three columns">
-                    <p>#(user.email)</p>
+                    <p>#(item.email)</p>
                 </div>
                 <div class="three columns">
-                    <p>#(user.deviceid)</p>
+                    <p>#(item.deviceid)</p>
                 </div>
             </div>
         }

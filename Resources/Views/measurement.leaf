@@ -1,0 +1,53 @@
+#extend("base")
+
+#export("head") {
+    <title> Measurement </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+    <link rel="stylesheet" href="/styles/Skeleton-2.0.4/normalize.css"></link>
+    <link rel="stylesheet" href="/styles/Skeleton-2.0.4/skeleton.css"></link>
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Releway:400,300,600" type="text/css"></link>
+}
+
+#export("body") {
+<div class="container">
+    <div class="row">
+        <div class="u-full-width">
+            <h2>All measurements</h2>
+        </div>
+    </div>
+    
+    <!--   -->
+    <div class="row">
+        <div class="three columns">
+            <h5>id</h5>
+        </div>
+        <div class="three columns">
+            <h5>name</h5>
+        </div>
+        <div class="three columns">
+            <h5>email</h5>
+        </div>
+        <div class="three columns">
+            <h5></h5>
+        </div>
+    </div>
+    
+    #loop(items, "item") {
+    <div class="row">
+        <div class="three columns">
+            <h5><span>#(item.id)</span></h5>
+        </div>
+        <div class="three columns">
+            <p>#(item.time)</p>
+        </div>
+        <div class="three columns">
+            <p>#(item.value)</p>
+        </div>
+        <div class="three columns">
+            <p></p>
+        </div>
+    </div>
+    }
+    
+</div>
+}

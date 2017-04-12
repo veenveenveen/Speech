@@ -142,7 +142,7 @@ extension VGUserController {
         group.post("login", handler: login)
         group.post("register", handler: register)
         group.post("findPassword", handler: findPassword)
-        group.get("usersview", handler: indexView)
+        group.get("views", handler: indexView)
     }
     
     
@@ -196,7 +196,7 @@ extension VGUserController {
     func indexView(request: Request) throws -> ResponseRepresentable {
         let allusers = try VGUser.all().makeNode()
         let parameters = try Node(node: [
-                "users":allusers
+                "items":allusers
             ])
         return try drop.view.make("vguser", parameters)
     }

@@ -13,14 +13,28 @@ import HTTP
 import VaporPostgreSQL
 
 
-typealias MeasurementModel = Model & MeasurementInfo
-
+/// 使用Request创建Measurement Model
+extension Request {
+    
+    func measurement<T: MeasurementModel>() throws -> T {
+        guard
+            let value = data[ Measurement.Attr.value ]?.double,
+            let timeStr = data[ Measurement.Attr.time ]?.string else {
+                throw Abort.badRequest
+        }
+        
+        let time = try timeStr.dateTimeIntervalFrom1970()
+        
+        return T(time: time, value: value)
+    }
+}
 
 
 /// `Type` define
 /// Restful API for Measurement Model controller
 ///
-final class MeasurementController<T> where T: MeasurementModel  {
+final class MeasurementController<T>: ResourceRepresentable where T: MeasurementModel  {
+    
     
     /// all models
     func index(request: Request) throws -> ResponseRepresentable {
@@ -57,43 +71,9 @@ final class MeasurementController<T> where T: MeasurementModel  {
     }
     
     
+    // MARK: - ResourceRepresentable
     
-    // MARK: - Fake data api
-    
-    func fakeMeasurement(request: Request) throws -> ResponseRepresentable {
-        
-        if let _ = UserDefaults.standard.object(forKey: "CFM") {
-            return "Exsited!"
-        }
-        
-        let meas: [MeasurementType] = [.airTemperature,.airHumidity,.co2Concentration,.lightIntensity,.soilTemperature,.soilHumidity]
-        let seqs = stride(from: 1, through: 12, by: 1)
-        try meas.map { $0.tablename }.forEach { key in
-            try seqs.forEach { seq in
-                guard
-                    let item = drop.config["measurement",key,"\(seq)"],
-                    let timeString = item[Measurement.Attr.time]?.string,
-                    let value = item[Measurement.Attr.value]?.double else {
-                        throw Abort.custom(status: .notFound, message: "read <config.\(key).\(seq)> error")
-                }
-                let time = try timeString.dateTimeIntervalFrom1970()
-                var m = T(time: time, value: value)
-                try m.save()
-            }
-        }
-        
-        UserDefaults.standard.set("done", forKey: "CFM")
-        
-        return "Done"
-    }
-    
-}
-
-
-/// So MeasurementController can be used as ResourceRepresentable by Droplet
-///
-extension MeasurementController: ResourceRepresentable {
-    
+    /// So MeasurementController can be used as ResourceRepresentable by Droplet
     func makeResource() -> Resource<T> {
         return Resource(index: index,
                         store: create,
@@ -105,9 +85,45 @@ extension MeasurementController: ResourceRepresentable {
                         aboutItem: aboutItem,
                         aboutMultiple: nil)
     }
+    
+    
+    // MARK: - Views api
+    
+    func indexView(request: Request) throws -> ResponseRepresentable {
+        let nodes = try T.all().makeNode()
+        
+        guard let arr = nodes.array else {
+            throw Abort.custom(status: .badRequest, message: "parse error.")
+        }
+        
+        let items = try arr.map({ (node) -> Node in
+            guard
+                let node = node.object,
+                let id = node["id"]?.int,
+                let time = node["time"]?.double,
+                let value = node["value"]?.double else {
+                    throw Abort.custom(status: .badRequest, message: "parse error.")
+            }
+            let date = Date(timeIntervalSince1970: time).description
+            let nod = try Node(node: [
+                Measurement.Attr.id     :   Node(id),
+                Measurement.Attr.time   :   date,
+                Measurement.Attr.value  :   value])
+            return nod
+        })
+        
+        let parameters = try Node(node: ["items":Node(items)])
+        return try drop.view.make("measurement", parameters)
+    }
 }
 
+
 extension MeasurementController where T: RangeQueryable, T.AttributeType == Double {
+    
+    func add(route: String, to drop: Droplet) {
+        drop.get(route, "range", handler: range)
+        drop.get(route, "views", handler: indexView)
+    }
     
     /// airts/range?from=2017-03-01 08:00:00&to=2017-03-03 08:00:00
     func range(request: Request) throws -> ResponseRepresentable {
@@ -131,20 +147,5 @@ extension MeasurementController where T: RangeQueryable, T.AttributeType == Doub
 }
 
 
-/// 使用Request创建Measurement Model
-extension Request {
-    
-    func measurement<T: MeasurementModel>() throws -> T {
-        guard
-            let value = data[ Measurement.Attr.value ]?.double,
-            let timeStr = data[ Measurement.Attr.time ]?.string else {
-                throw Abort.badRequest
-        }
-        
-        let time = try timeStr.dateTimeIntervalFrom1970()
-        
-        return T(time: time, value: value)
-    }
-}
 
 

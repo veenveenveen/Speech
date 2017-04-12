@@ -30,7 +30,11 @@ protocol RangeQueryable {
     static func query(range: Range<AttributeType>) throws -> JSON
 }
 
-/// `Type` define
+
+typealias MeasurementModel = Model & MeasurementInfo
+
+
+/// `Abstact` class
 /// 监测数据的抽象父类，实现了部分Model协议，除了Preparation
 /// Preparation 需要静态方法，只能由单独的数据结构实现
 ///
@@ -51,7 +55,6 @@ class Measurement: MeasurementInfo {
         self.value = value
     }
     
-    
     // MARK: - Model
     
     var id: Node?
@@ -66,21 +69,17 @@ class Measurement: MeasurementInfo {
         value = try node.extract(Attr.value)
     }
     
-    
     // NodeRepresentable
     
     func makeNode(context: Context) throws -> Node {
         return try Node(node: [
             Attr.id:id,
             Attr.time:time,
-            Attr.value:value
-            ])
+            Attr.value:value])
     }
 }
 
-extension Measurement: NodeInitializable, NodeRepresentable {
-    
-}
+extension Measurement: NodeInitializable, NodeRepresentable { }
 
 extension Measurement {
     
