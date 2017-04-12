@@ -6,13 +6,14 @@
 //
 //
 
+import Foundation
 
 import Vapor
 import HTTP
 import VaporPostgreSQL
 
 
-typealias MeasurementModel = Model & MeasurementInfo & MeasurementInfoInitializable
+typealias MeasurementModel = Model & MeasurementInfo
 
 
 
@@ -53,6 +54,37 @@ final class MeasurementController<T> where T: MeasurementModel  {
     func clear(request: Request) throws -> ResponseRepresentable {
         try VGUser.query().delete()
         return JSON([])
+    }
+    
+    
+    
+    // MARK: - Fake data api
+    
+    func fakeMeasurement(request: Request) throws -> ResponseRepresentable {
+        
+        if let _ = UserDefaults.standard.object(forKey: "CFM") {
+            return "Exsited!"
+        }
+        
+        let meas: [MeasurementType] = [.airTemperature,.airHumidity,.co2Concentration,.lightIntensity,.soilTemperature,.soilHumidity]
+        let seqs = stride(from: 1, through: 12, by: 1)
+        try meas.map { $0.tablename }.forEach { key in
+            try seqs.forEach { seq in
+                guard
+                    let item = drop.config["measurement",key,"\(seq)"],
+                    let timeString = item[Measurement.Attr.time]?.string,
+                    let value = item[Measurement.Attr.value]?.double else {
+                        throw Abort.custom(status: .notFound, message: "read <config.\(key).\(seq)> error")
+                }
+                let time = try timeString.dateTimeIntervalFrom1970()
+                var m = T(time: time, value: value)
+                try m.save()
+            }
+        }
+        
+        UserDefaults.standard.set("done", forKey: "CFM")
+        
+        return "Done"
     }
     
 }

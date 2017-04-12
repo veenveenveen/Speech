@@ -70,12 +70,8 @@ struct VGUser: Model {
     }
     
     
-}
+    // Preparation
 
-/// Preparation
-///
-extension VGUser {
-    
     static func revert(_ database: Database) throws {
         try database.delete("vgusers")
     }

@@ -15,28 +15,34 @@
                 <h2>All Users</h2>
             </div>
         </div>
-        
+        <!--   -->
         <div class="row">
-            <div class="four columns">
-                <h5>user id</h5>
+            <div class="three columns">
+                <h5>id</h5>
             </div>
-            <div class="four columns">
-                <h5>user name</h5>
+            <div class="three columns">
+                <h5>name</h5>
             </div>
-            <div class="four columns">
+            <div class="three columns">
+                <h5>email</h5>
+            </div>
+            <div class="three columns">
                 <h5>device id</h5>
             </div>
         </div>
         
         #loop(users, "user") {
             <div class="row">
-                <div class="four columns">
+                <div class="three columns">
                     <h5><span>#(user.id)</span></h5>
                 </div>
-                <div class="four columns">
+                <div class="three columns">
                     <p>#(user.username)</p>
                 </div>
-                <div class="four columns">
+                <div class="three columns">
+                    <p>#(user.email)</p>
+                </div>
+                <div class="three columns">
                     <p>#(user.deviceid)</p>
                 </div>
             </div>

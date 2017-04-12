@@ -6,6 +6,7 @@
 //
 //
 
+import Foundation
 import Vapor
 import HTTP
 import VaporPostgreSQL
@@ -15,11 +16,13 @@ import Fluent
 final class BasicController {
     
     /// 注册加入 ／basic 路由组
-    func add(basicGroupedRoutes drop: Droplet) {
+    func addToDroplet() {
         let basic = drop.grouped("basic")
         basic.get("version", handler: version)
         basic.get("integrated", handler: integrated)
         basic.get("range", handler: range)
+        basic.post("make-fake-measurements", handler: fakeMeasurements)
+        basic.post("make-fake-users", handler: fakeUsers)
     }
     
     /// postgresql version
@@ -33,11 +36,13 @@ final class BasicController {
         return try JSON(node: version)
     }
     
+    
+    
     /// first of all types
     func integrated(request: Request) throws -> ResponseRepresentable {
         var nodes = [JSON]()
         var json: JSON
-        
+                
         if let f = try Airh.query().first() {
             json = try f.makeNode().converted(to: JSON.self)
         } else {
@@ -83,28 +88,6 @@ final class BasicController {
         return try nodes.makeJSON()
     }
     
-    /// { from:2017-03-01 08:00:00, to:2017-03-03 08:00:00 }
-    func airTemperature(request: Request) throws -> ResponseRepresentable {
-        guard
-            let fromString = request.data["from"]?.string,
-            let toString = request.data["to"]?.string else {
-                throw Abort.badRequest
-        }
-        
-        let from = try fromString.dateTimeIntervalFrom1970()
-        let to = try toString.dateTimeIntervalFrom1970()
-        
-        guard from < to else {
-            throw Abort.badRequest
-        }
-        
-        return try Airt.query()
-            .filter("time", .greaterThanOrEquals, from)
-            .filter("time", .lessThanOrEquals, to)
-            .all()
-            .makeJSON()
-    }
-    
     /// ?type=airTemperature&from=2017-03-01 08:00:00&to=2017-03-03 08:00:00
     func range(request: Request) throws -> ResponseRepresentable {
         guard
@@ -139,5 +122,73 @@ final class BasicController {
         default:
             throw Abort.custom(status: .badRequest, message: "Invalid query `type`<\(type)> value")
         }
+    }
+    
+
+    
+    // MARK: - Fake data api
+    
+    func fakeMeasurements(request: Request) throws -> ResponseRepresentable {
+        
+        if let _ = UserDefaults.standard.object(forKey: "CFM") {
+            return "Exsited!"
+        }
+        
+        let meas: [MeasurementType] = [.airTemperature,.airHumidity,.co2Concentration,.lightIntensity,.soilTemperature,.soilHumidity]
+        let seqs = stride(from: 1, through: 12, by: 1)
+        
+        try meas.forEach { mea in
+            try seqs.forEach { seq in
+                let name = mea.tablename
+                guard
+                    let item = drop.config["measurement", name, "\(seq)"],
+                    let timeString = item[Measurement.Attr.time]?.string,
+                    let value = item[Measurement.Attr.value]?.double else {
+                        throw Abort.custom(status: .notFound, message: "read <config.\(mea.tablename).\(seq)> error")
+                }
+                let time = try timeString.dateTimeIntervalFrom1970()
+                
+                if var m = mea.classType?.init(time: time, value: value) {
+                    try m.save()
+                } else {
+                    throw Abort.custom(status: .badRequest, message: "class type error")
+                }
+            }
+        }
+        
+        UserDefaults.standard.set("done", forKey: "CFM")
+        
+        return "Done"
+    }
+    
+    private func fakeUser(path: String) throws -> VGUser {
+        if
+            let item = drop.config["vgusers", path],
+            let un = item["username"]?.string,
+            let up = item["password"]?.string,
+            let ud = item["deviceid"]?.string {
+            
+            let ue = item["email"]?.string ?? ""
+            
+            return VGUser(username: un, password: up, deviceid: ud, email: ue)
+        }
+        throw Abort.custom(status: .notFound, message: "read <config.vgusers.\(path)> error")
+    }
+    
+    func fakeUsers(request: Request) throws -> ResponseRepresentable {
+        
+        if let _ = UserDefaults.standard.object(forKey: "CFU") {
+            return "Exsited!"
+        }
+        
+        var user = try fakeUser(path: "viwii")
+        try user.save()
+        
+        user = try fakeUser(path: "kikoy")
+        try user.save()
+        
+        UserDefaults.standard.set("done", forKey: "CFU")
+        
+        return "Done"
     }
 }

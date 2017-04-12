@@ -34,42 +34,50 @@ drop.get { req in
 
 /// Regist basic grouped routes
 let basic = BasicController()
-basic.add(basicGroupedRoutes: drop)
+basic.addToDroplet()
+
 
 /// /vgusers/xxx restful api
-let userResource = VGUserController()
-drop.resource("users", userResource)
-userResource.add(usersGroupedRoutes: drop)
+let user = VGUserController()
+drop.resource("users", user)
+user.addToDroplet()
+
 
 /// /airh/xxx restful api 75.8
 let airhResource = MeasurementController<Airh>()
 drop.resource(MeasurementType.airHumidity.tablename, airhResource)
 drop.get(MeasurementType.airHumidity.tablename, "range", handler: airhResource.range)
 
+
 /// /airt/xxx restful api 25.4
 let airtResource = MeasurementController<Airt>()
 drop.resource(MeasurementType.airTemperature.tablename, airhResource)
 drop.get(MeasurementType.airTemperature.tablename, "range", handler: airtResource.range)
+
 
 /// /soilh/xxx restful api 82.2
 let soilhResource = MeasurementController<Soilh>()
 drop.resource(MeasurementType.soilHumidity.tablename, airhResource)
 drop.get(MeasurementType.soilHumidity.tablename, "range", handler: soilhResource.range)
 
+
 /// /soilt/xxx restful api 22.8
 let soiltResource = MeasurementController<Soilt>()
 drop.resource(MeasurementType.soilTemperature.tablename, airhResource)
 drop.get(MeasurementType.soilTemperature.tablename, "range", handler: soiltResource.range)
+
 
 /// /lighti/xxx restful api 18.2
 let lightiResource = MeasurementController<Lighti>()
 drop.resource(MeasurementType.lightIntensity.tablename, airhResource)
 drop.get(MeasurementType.lightIntensity.tablename, "range", handler: lightiResource.range)
 
+
 /// /cooc/xxx restful api 673.6
 let coocResource = MeasurementController<Cooc>()
 drop.resource(MeasurementType.co2Concentration.tablename, airhResource)
 drop.get(MeasurementType.co2Concentration.tablename, "range", handler: coocResource.range)
+
 
 
 /// Should run droplet in main.swift

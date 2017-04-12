@@ -137,7 +137,7 @@ final class VGUserController: ResourceRepresentable {
 
 extension VGUserController {
     
-    func add(usersGroupedRoutes drop: Droplet) {
+    func addToDroplet() {
         let group = drop.grouped("users")
         group.post("login", handler: login)
         group.post("register", handler: register)
