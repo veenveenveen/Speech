@@ -87,7 +87,7 @@ final class MeasurementController<T>: ResourceRepresentable where T: Measurement
     
     // MARK: - Views api
     
-    func indexView(request: Request) throws -> ResponseRepresentable {
+    func views(request: Request) throws -> ResponseRepresentable {
         let nodes = try T.all().makeNode()
         
         guard let arr = nodes.array else {
@@ -98,14 +98,13 @@ final class MeasurementController<T>: ResourceRepresentable where T: Measurement
             guard
                 let node = node.object,
                 let id = node["id"]?.int,
-                let time = node["time"]?.double,
+                let time = node["time"]?.string,
                 let value = node["value"]?.double else {
                     throw Abort.custom(status: .badRequest, message: "parse error.")
             }
-            let date = Date(timeIntervalSince1970: time).description
             let nod = try Node(node: [
                 Measurement.Attr.id     :   Node(id),
-                Measurement.Attr.time   :   date,
+                Measurement.Attr.time   :   time,
                 Measurement.Attr.value  :   value])
             return nod
         })
@@ -120,7 +119,7 @@ extension MeasurementController where T: RangeQueryable, T.AttributeType == Doub
     
     func add(route: String, to drop: Droplet) {
         drop.get(route, "range", handler: range)
-        drop.get(route, "views", handler: indexView)
+        drop.get(route, "views", handler: views)
     }
     
     /// airts/range?from=2017-03-01 08:00:00&to=2017-03-03 08:00:00

@@ -97,15 +97,19 @@ final class BasicController {
         }
     }
     
-
+    
     
     // MARK: - Fake data api
     
     func fakeMeasurements(request: Request) throws -> ResponseRepresentable {
         
-        let meas: [MeasurementType] = [.airTemperature,.airHumidity,.co2Concentration,.lightIntensity,.soilTemperature,.soilHumidity]
+        let meas: [MeasurementType] = [.airTemperature,
+                                       .airHumidity,
+                                       .co2Concentration,
+                                       .lightIntensity,
+                                       .soilTemperature,
+                                       .soilHumidity]
         let seqs = stride(from: 1, through: 12, by: 1)
-        
         try meas.forEach { mea in
             try seqs.forEach { seq in
                 let name = mea.tablename
