@@ -24,9 +24,7 @@ func setup(drop: Droplet) throws {
     
     /// Welcome page
     drop.get { req in
-        
-        let local = drop.localization[req.lang, "welcome", "title"]
-        
+        let local = drop.localization[req.lang, "welcome", "title"]        
         return try drop.view.make("welcome", ["message":local])
     }
     
@@ -71,15 +69,10 @@ func setup(drop: Droplet) throws {
     coocResource.add(route: MeasurementType.co2Concentration.tablename, to: drop)
     
     drop.resource(MeasurementType.airHumidity.tablename, airhResource)
-
     drop.resource(MeasurementType.airTemperature.tablename, airtResource)
-
     drop.resource(MeasurementType.soilHumidity.tablename, soilhResource)
-
     drop.resource(MeasurementType.soilTemperature.tablename, soiltResource)
-
     drop.resource(MeasurementType.lightIntensity.tablename, lightiResource)
-
     drop.resource(MeasurementType.co2Concentration.tablename, coocResource)
 
 }

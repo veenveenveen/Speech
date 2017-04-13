@@ -22,10 +22,10 @@
             <h5>id</h5>
         </div>
         <div class="three columns">
-            <h5>name</h5>
+            <h5>time</h5>
         </div>
         <div class="three columns">
-            <h5>email</h5>
+            <h5>value</h5>
         </div>
         <div class="three columns">
             <h5></h5>
