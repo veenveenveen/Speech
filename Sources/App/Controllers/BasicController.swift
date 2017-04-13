@@ -24,7 +24,6 @@ final class BasicController {
         basic.post("make-fake-measurements", handler: fakeMeasurements)
         basic.post("make-fake-users", handler: fakeUsers)
         basic.post("columns", handler: columns)
-        basic.post("add-column", handler: addColumn)
     }
     
     /// postgresql version
@@ -38,15 +37,6 @@ final class BasicController {
         return try JSON(node: version)
     }
     
-    func addColumn(request: Request) throws -> ResponseRepresentable {
-        guard let db = drop.database?.driver as? PostgreSQLDriver else {
-            throw Abort.badRequest
-        }
-        
-        let res = try db.raw("ALTER TABLE vgusers ADD COLUMN email varying(255);")
-        
-        return try JSON(node: res)
-    }
     
     func columns(request: Request) throws -> ResponseRepresentable {
         guard let db = drop.database?.driver as? PostgreSQLDriver else {
@@ -60,52 +50,15 @@ final class BasicController {
     
     /// first of all types
     func integrated(request: Request) throws -> ResponseRepresentable {
-        var nodes = [JSON]()
-        var json: JSON
-                
-        if let f = try Airh.query().first() {
-            json = try f.makeNode().converted(to: JSON.self)
-        } else {
-            json = JSON( [:] )
-        }
-        nodes.append(JSON( ["airHumidity" : json ] ) )
-
-        if let f = try Airt.query().first() {
-            json = try f.makeNode().converted(to: JSON.self)
-        } else {
-            json = JSON( [:] )
-        }
-        nodes.append(JSON( ["airTemperature" : json ] ) )
+        let dictionary = [
+            "airHumidity" : Airh.latest,
+            "airTemperature" : Airt.latest,
+            "soilHumidity": Soilh.latest,
+            "soilTemperature": Soilt.latest,
+            "lightIntensity": Lighti.latest,
+            "co2Concentration": Cooc.latest]
         
-        if let f = try Soilh.query().first() {
-            json = try f.makeNode().converted(to: JSON.self)
-        } else {
-            json = JSON( [:] )
-        }
-        nodes.append(JSON( ["soilHumidity" : json ] ) )
-        
-        if let f = try Soilt.query().first() {
-            json = try f.makeNode().converted(to: JSON.self)
-        } else {
-            json = JSON( [:] )
-        }
-        nodes.append(JSON( ["soilTemperature" : json ] ) )
-        
-        if let f = try Lighti.query().first() {
-            json = try f.makeNode().converted(to: JSON.self)
-        } else {
-            json = JSON( [:] )
-        }
-        nodes.append(JSON( ["lightIntensity" : json ] ) )
-        
-        if let f = try Cooc.query().first() {
-            json = try f.makeNode().converted(to: JSON.self)
-        } else {
-            json = JSON( [:] )
-        }
-        nodes.append(JSON( ["co2Concentration" : json ] ) )
-
-        return try nodes.makeJSON()
+        return JSON(dictionary)
     }
     
     /// ?type=airTemperature&from=2017-03-01 08:00:00&to=2017-03-03 08:00:00

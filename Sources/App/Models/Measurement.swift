@@ -117,15 +117,37 @@ final class Airh: Measurement, Model, RangeQueryable {
     typealias AttributeType = Double
     
     static func query(range: Range<Double>) throws -> JSON {
-        return try Airh.query()
-            .filter( Attr.time, .greaterThanOrEquals, range.lowerBound)
-            .filter( Attr.time, .lessThanOrEquals, range.upperBound)
-            .all()
+        
+        return try Airh.query().all()
+            .filter ({ (a) -> Bool in
+                /// 确保数据格式正确
+                do {
+                    let at = try a.time.dateTimeIntervalFrom1970()
+                    return at >= range.lowerBound && at <= range.upperBound
+                } catch {
+                    return false
+                }
+            })
+            .sorted(by: { (a, b) -> Bool in
+                /// 数据格式已经在上一步filter了，因此不应该出现error
+                do {
+                    let at = try a.time.dateTimeIntervalFrom1970()
+                    let bt = try b.time.dateTimeIntervalFrom1970()
+                    return at <= bt
+                } catch {
+                    return true
+                }
+            })
             .makeJSON()
+        
+//        return try Airh.query()
+//            .filter( Attr.time, .greaterThanOrEquals, range.lowerBound)
+//            .filter( Attr.time, .lessThanOrEquals, range.upperBound)
+//            .all()
+//            .makeJSON()
     }
     
     static var latest: JSON {
-        
         do {
             let f = try Airh.query().sort(Measurement.Attr.time, .descending).first()?.makeJSON().converted(to: JSON.self)
             
@@ -165,11 +187,33 @@ final class Airt: Measurement, Model, RangeQueryable {
     typealias AttributeType = Double
     
     static func query(range: Range<Double>) throws -> JSON {
-        return try Airt.query()
-            .filter( Attr.time, .greaterThanOrEquals, range.lowerBound)
-            .filter( Attr.time, .lessThanOrEquals, range.upperBound)
-            .all()
+        return try Airt.query().all()
+            .filter ({ (a) -> Bool in
+                /// 确保数据格式正确
+                do {
+                    let at = try a.time.dateTimeIntervalFrom1970()
+                    return at >= range.lowerBound && at <= range.upperBound
+                } catch {
+                    return false
+                }
+            })
+            .sorted(by: { (a, b) -> Bool in
+                /// 数据格式已经在上一步filter了，因此不应该出现error
+                do {
+                    let at = try a.time.dateTimeIntervalFrom1970()
+                    let bt = try b.time.dateTimeIntervalFrom1970()
+                    return at <= bt
+                } catch {
+                    return true
+                }
+            })
             .makeJSON()
+        
+//        return try Airt.query()
+//            .filter( Attr.time, .greaterThanOrEquals, range.lowerBound)
+//            .filter( Attr.time, .lessThanOrEquals, range.upperBound)
+//            .all()
+//            .makeJSON()
     }
     
     static var latest: JSON {
@@ -211,11 +255,34 @@ final class Cooc: Measurement, Model, RangeQueryable {
     typealias AttributeType = Double
     
     static func query(range: Range<Double>) throws -> JSON {
-        return try Cooc.query()
-            .filter( Attr.time, .greaterThanOrEquals, range.lowerBound)
-            .filter( Attr.time, .lessThanOrEquals, range.upperBound)
-            .all()
+
+        return try Cooc.query().all()
+            .filter ({ (a) -> Bool in
+                /// 确保数据格式正确
+                do {
+                    let at = try a.time.dateTimeIntervalFrom1970()
+                    return at >= range.lowerBound && at <= range.upperBound
+                } catch {
+                    return false
+                }
+            })
+            .sorted(by: { (a, b) -> Bool in
+                /// 数据格式已经在上一步filter了，因此不应该出现error
+                do {
+                    let at = try a.time.dateTimeIntervalFrom1970()
+                    let bt = try b.time.dateTimeIntervalFrom1970()
+                    return at <= bt
+                } catch {
+                    return true
+                }
+            })
             .makeJSON()
+        
+//        return try Cooc.query()
+//            .filter( Attr.time, .greaterThanOrEquals, range.lowerBound)
+//            .filter( Attr.time, .lessThanOrEquals, range.upperBound)
+//            .all()
+//            .makeJSON()
     }
     
     static var latest: JSON {
@@ -258,11 +325,33 @@ final class Lighti: Measurement, Model, RangeQueryable {
     typealias AttributeType = Double
     
     static func query(range: Range<Double>) throws -> JSON {
-        return try Lighti.query()
-            .filter( Attr.time, .greaterThanOrEquals, range.lowerBound)
-            .filter( Attr.time, .lessThanOrEquals, range.upperBound)
-            .all()
+        return try Lighti.query().all()
+            .filter ({ (a) -> Bool in
+                /// 确保数据格式正确
+                do {
+                    let at = try a.time.dateTimeIntervalFrom1970()
+                    return at >= range.lowerBound && at <= range.upperBound
+                } catch {
+                    return false
+                }
+            })
+            .sorted(by: { (a, b) -> Bool in
+                /// 数据格式已经在上一步filter了，因此不应该出现error
+                do {
+                    let at = try a.time.dateTimeIntervalFrom1970()
+                    let bt = try b.time.dateTimeIntervalFrom1970()
+                    return at <= bt
+                } catch {
+                    return true
+                }
+            })
             .makeJSON()
+        
+//        return try Lighti.query()
+//            .filter( Attr.time, .greaterThanOrEquals, range.lowerBound)
+//            .filter( Attr.time, .lessThanOrEquals, range.upperBound)
+//            .all()
+//            .makeJSON()
     }
     
     static var latest: JSON {
@@ -304,11 +393,33 @@ final class Soilh: Measurement, Model, RangeQueryable {
     typealias AttributeType = Double
     
     static func query(range: Range<Double>) throws -> JSON {
-        return try Soilh.query()
-            .filter( Attr.time, .greaterThanOrEquals, range.lowerBound)
-            .filter( Attr.time, .lessThanOrEquals, range.upperBound)
-            .all()
+        return try Soilh.query().all()
+            .filter ({ (a) -> Bool in
+                /// 确保数据格式正确
+                do {
+                    let at = try a.time.dateTimeIntervalFrom1970()
+                    return at >= range.lowerBound && at <= range.upperBound
+                } catch {
+                    return false
+                }
+            })
+            .sorted(by: { (a, b) -> Bool in
+                /// 数据格式已经在上一步filter了，因此不应该出现error
+                do {
+                    let at = try a.time.dateTimeIntervalFrom1970()
+                    let bt = try b.time.dateTimeIntervalFrom1970()
+                    return at <= bt
+                } catch {
+                    return true
+                }
+            })
             .makeJSON()
+        
+//        return try Soilh.query()
+//            .filter( Attr.time, .greaterThanOrEquals, range.lowerBound)
+//            .filter( Attr.time, .lessThanOrEquals, range.upperBound)
+//            .all()
+//            .makeJSON()
     }
     
     static var latest: JSON {
@@ -351,11 +462,33 @@ final class Soilt: Measurement, Model, RangeQueryable {
     typealias AttributeType = Double
     
     static func query(range: Range<Double>) throws -> JSON {
-        return try Soilt.query()
-            .filter( Attr.time, .greaterThanOrEquals, range.lowerBound)
-            .filter( Attr.time, .lessThanOrEquals, range.upperBound)
-            .all()
+        return try Soilt.query().all()
+            .filter ({ (a) -> Bool in
+                /// 确保数据格式正确
+                do {
+                    let at = try a.time.dateTimeIntervalFrom1970()
+                    return at >= range.lowerBound && at <= range.upperBound
+                } catch {
+                    return false
+                }
+            })
+            .sorted(by: { (a, b) -> Bool in
+                /// 数据格式已经在上一步filter了，因此不应该出现error
+                do {
+                    let at = try a.time.dateTimeIntervalFrom1970()
+                    let bt = try b.time.dateTimeIntervalFrom1970()
+                    return at <= bt
+                } catch {
+                    return true
+                }
+            })
             .makeJSON()
+        
+//        return try Soilt.query()
+//            .filter( Attr.time, .greaterThanOrEquals, range.lowerBound)
+//            .filter( Attr.time, .lessThanOrEquals, range.upperBound)
+//            .all()
+//            .makeJSON()
     }
     
     static var latest: JSON {
