@@ -13,11 +13,11 @@ import Vapor
 ///
 protocol MeasurementInfo {
     
-    var time: Double {get set}
+    var time: String {get set}
     
     var value: Double {get set}
     
-    init(time: Double, value: Double)
+    init(time: String, value: Double)
 }
 
 
@@ -43,12 +43,12 @@ class Measurement: MeasurementInfo {
     // MARK: - Properties
     
     /// 采样时间
-    var time: Double
+    var time: String
     
     /// 采样值
     var value: Double
     
-    required init(time: Double, value: Double) {
+    required init(time: String, value: Double) {
         self.id = nil
         self.exists = false
         self.time = time
@@ -107,7 +107,7 @@ final class Airh: Measurement, Model, RangeQueryable {
         try database.create( MeasurementType.airHumidity.tablename ) {
             $0.id()
             $0.double( Attr.value )
-            $0.double( Attr.time )
+            $0.string( Attr.time )
         }
     }
     
@@ -155,7 +155,7 @@ final class Airt: Measurement, Model, RangeQueryable {
         try database.create( MeasurementType.airTemperature.tablename ) {
             $0.id()
             $0.double( Attr.value )
-            $0.double( Attr.time )
+            $0.string( Attr.time )
         }
     }
     
@@ -201,7 +201,7 @@ final class Cooc: Measurement, Model, RangeQueryable {
         try database.create(MeasurementType.co2Concentration.tablename) {
             $0.id()
             $0.double( Attr.value )
-            $0.double( Attr.time )
+            $0.string( Attr.time )
         }
     }
     
@@ -247,7 +247,7 @@ final class Lighti: Measurement, Model, RangeQueryable {
         try database.create(MeasurementType.lightIntensity.tablename) {
             $0.id()
             $0.double( Attr.value )
-            $0.double( Attr.time )
+            $0.string( Attr.time )
         }
     }
     
@@ -294,7 +294,7 @@ final class Soilh: Measurement, Model, RangeQueryable {
         try database.create(MeasurementType.soilHumidity.tablename) {
             $0.id()
             $0.double( Attr.value )
-            $0.double( Attr.time )
+            $0.string( Attr.time )
         }
     }
     
@@ -341,7 +341,7 @@ final class Soilt: Measurement, Model, RangeQueryable {
         try database.create(MeasurementType.soilTemperature.tablename) {
             $0.id()
             $0.double( Attr.value )
-            $0.double( Attr.time )
+            $0.string( Attr.time )
         }
     }
     

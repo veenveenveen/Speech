@@ -19,11 +19,9 @@ extension Request {
     func measurement<T: MeasurementModel>() throws -> T {
         guard
             let value = data[ Measurement.Attr.value ]?.double,
-            let timeStr = data[ Measurement.Attr.time ]?.string else {
+            let time = data[ Measurement.Attr.time ]?.string else {
                 throw Abort.badRequest
         }
-        
-        let time = try timeStr.dateTimeIntervalFrom1970()
         
         return T(time: time, value: value)
     }

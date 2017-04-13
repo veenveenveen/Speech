@@ -23,6 +23,8 @@ final class BasicController {
         basic.get("range", handler: range)
         basic.post("make-fake-measurements", handler: fakeMeasurements)
         basic.post("make-fake-users", handler: fakeUsers)
+        basic.post("columns", handler: columns)
+        basic.post("add-column", handler: addColumn)
     }
     
     /// postgresql version
@@ -36,7 +38,25 @@ final class BasicController {
         return try JSON(node: version)
     }
     
+    func addColumn(request: Request) throws -> ResponseRepresentable {
+        guard let db = drop.database?.driver as? PostgreSQLDriver else {
+            throw Abort.badRequest
+        }
+        
+        let res = try db.raw("ALTER TABLE vgusers ADD COLUMN email varying(255);")
+        
+        return try JSON(node: res)
+    }
     
+    func columns(request: Request) throws -> ResponseRepresentable {
+        guard let db = drop.database?.driver as? PostgreSQLDriver else {
+            throw Abort.badRequest
+        }
+        
+        let res = try db.raw("select count(*) from information_schema.columns where table_name='vgusers';")
+        
+        return try JSON(node: res)
+    }
     
     /// first of all types
     func integrated(request: Request) throws -> ResponseRepresentable {
@@ -130,10 +150,6 @@ final class BasicController {
     
     func fakeMeasurements(request: Request) throws -> ResponseRepresentable {
         
-        if let _ = UserDefaults.standard.object(forKey: "CFM") {
-            return "Exsited!"
-        }
-        
         let meas: [MeasurementType] = [.airTemperature,.airHumidity,.co2Concentration,.lightIntensity,.soilTemperature,.soilHumidity]
         let seqs = stride(from: 1, through: 12, by: 1)
         
@@ -142,12 +158,10 @@ final class BasicController {
                 let name = mea.tablename
                 guard
                     let item = drop.config["measurement", name, "\(seq)"],
-                    let timeString = item[Measurement.Attr.time]?.string,
+                    let time = item[Measurement.Attr.time]?.string,
                     let value = item[Measurement.Attr.value]?.double else {
                         throw Abort.custom(status: .notFound, message: "read <config.\(mea.tablename).\(seq)> error")
                 }
-                let time = try timeString.dateTimeIntervalFrom1970()
-                
                 if var m = mea.classType?.init(time: time, value: value) {
                     try m.save()
                 } else {
@@ -176,10 +190,6 @@ final class BasicController {
     }
     
     func fakeUsers(request: Request) throws -> ResponseRepresentable {
-        
-        if let _ = UserDefaults.standard.object(forKey: "CFU") {
-            return "Exsited!"
-        }
         
         var user = try fakeUser(path: "viwii")
         try user.save()

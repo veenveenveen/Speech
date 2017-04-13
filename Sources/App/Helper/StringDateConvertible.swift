@@ -48,6 +48,7 @@ extension String {
     func dateTimeIntervalFrom1970() throws -> Double {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        
         guard let date = dateFormatter.date(from: self) else {
             throw DateConvertError.invalidFormat
         }
