@@ -119,8 +119,7 @@ final class BasicController {
                     let value = item[Measurement.Attr.value]?.double else {
                         throw Abort.custom(status: .notFound, message: "read <config.\(mea.tablename).\(seq)> error")
                 }
-                if let mt = mea.classType {
-                    var m = mt.init(time: time, value: value)
+                if var m = mea.classType?.init(time: time, value: value) {
                     try m.save()
                 } else {
                     throw Abort.custom(status: .badRequest, message: "class type error")
