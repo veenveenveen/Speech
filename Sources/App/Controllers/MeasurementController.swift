@@ -120,6 +120,7 @@ extension MeasurementController where T: RangeQueryable, T.AttributeType == Doub
     func add(route: String, to drop: Droplet) {
         drop.get(route, "range", handler: range)
         drop.get(route, "views", handler: views)
+        drop.get(route, "recent", Int.self, handler: recent)
     }
     
     /// airts/range?from=2017-03-01 08:00:00&to=2017-03-03 08:00:00
@@ -140,6 +141,11 @@ extension MeasurementController where T: RangeQueryable, T.AttributeType == Doub
         let range = Range<Double>(uncheckedBounds: (from, to))
         
         return try T.query(range: range)
+    }
+    
+    /// /recent/3 最近三条数据
+    func recent(request: Request, count: Int) throws -> ResponseRepresentable {
+        return try T.recent(count: count)
     }
 }
 

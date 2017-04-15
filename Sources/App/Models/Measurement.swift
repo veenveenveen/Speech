@@ -28,6 +28,8 @@ protocol RangeQueryable {
     static var latest: JSON { get }
     
     static func query(range: Range<AttributeType>) throws -> JSON
+    
+    static func recent(count: Int) throws -> JSON
 }
 
 
@@ -156,6 +158,11 @@ final class Airh: Measurement, Model, RangeQueryable {
             return JSON( [:] )
         }
     }
+    
+    static func recent(count: Int) throws -> JSON {
+        let res = try Airh.query().sort(Measurement.Attr.time, .descending).limit(count).all().makeJSON()
+        return res
+    }
 }
 
 
@@ -226,6 +233,13 @@ final class Airt: Measurement, Model, RangeQueryable {
             return JSON( [:] )
         }
     }
+    
+    
+    static func recent(count: Int) throws -> JSON {
+        let res = try Airt.query().sort(Measurement.Attr.time, .descending).limit(count).all().makeJSON()
+        return res
+    }
+    
 }
 
 
@@ -294,6 +308,12 @@ final class Cooc: Measurement, Model, RangeQueryable {
         } catch {
             return JSON( [:] )
         }
+    }
+    
+    
+    static func recent(count: Int) throws -> JSON {
+        let res = try Cooc.query().sort(Measurement.Attr.time, .descending).limit(count).all().makeJSON()
+        return res
     }
 }
 
@@ -364,6 +384,12 @@ final class Lighti: Measurement, Model, RangeQueryable {
             return JSON( [:] )
         }
     }
+    
+    
+    static func recent(count: Int) throws -> JSON {
+        let res = try Lighti.query().sort(Measurement.Attr.time, .descending).limit(count).all().makeJSON()
+        return res
+    }
 }
 
 
@@ -431,6 +457,12 @@ final class Soilh: Measurement, Model, RangeQueryable {
         } catch {
             return JSON( [:] )
         }
+    }
+    
+    
+    static func recent(count: Int) throws -> JSON {
+        let res = try Soilh.query().sort(Measurement.Attr.time, .descending).limit(count).all().makeJSON()
+        return res
     }
 }
 
@@ -500,5 +532,11 @@ final class Soilt: Measurement, Model, RangeQueryable {
         } catch {
             return JSON( [:] )
         }
+    }
+    
+    
+    static func recent(count: Int) throws -> JSON {
+        let res = try Soilt.query().sort(Measurement.Attr.time, .descending).limit(count).all().makeJSON()
+        return res
     }
 }

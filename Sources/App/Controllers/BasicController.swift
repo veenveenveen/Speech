@@ -24,6 +24,7 @@ final class BasicController {
         basic.post("make-fake-measurements", handler: fakeMeasurements)
         basic.post("make-fake-users", handler: fakeUsers)
         basic.post("columns", handler: columns)
+        basic.get("recent", Int.self, handler: recent)
     }
     
     /// postgresql version
@@ -97,6 +98,23 @@ final class BasicController {
         }
     }
     
+    /// /recent/3 最近三条数据
+    func recent(request: Request, count: Int) throws -> ResponseRepresentable {
+        let airt = try Airt.recent(count: count)
+        let airh = try Airh.recent(count: count)
+        let soilt = try Soilt.recent(count: count)
+        let soilh = try Soilh.recent(count: count)
+        let cooc = try Cooc.recent(count: count)
+        let lighti = try Lighti.recent(count: count)
+        let dictionary = [
+            "airHumidity" : airh,
+            "airTemperature" : airt,
+            "soilHumidity": soilh,
+            "soilTemperature": soilt,
+            "lightIntensity": lighti,
+            "co2Concentration": cooc]
+        return JSON(dictionary)
+    }
     
     
     // MARK: - Fake data api
